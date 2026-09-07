@@ -134,7 +134,7 @@ Skill-Loop/
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/Skill-Loop.git
+git clone https://github.com/agraw-2305/Skill-Loop.git
 cd Skill-Loop
 ```
 
