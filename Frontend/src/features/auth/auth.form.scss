@@ -1,0 +1,1107 @@
+/* ============================================================
+   INTERVIEW AI — AUTHENTICATION
+   Premium dark / glassmorphism / animated UI
+   Works with existing Login.jsx + Register.jsx
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   VARIABLES
+------------------------------------------------------------ */
+
+$bg: #070910;
+$bg-deep: #05060b;
+
+$card: rgba(17, 20, 31, 0.82);
+$card-light: rgba(25, 29, 43, 0.72);
+$input: rgba(8, 11, 19, 0.78);
+
+$text: #f7f7fb;
+$text-soft: #d5d8e2;
+$text-muted: #7b8293;
+
+$border: rgba(255, 255, 255, 0.09);
+$border-hover: rgba(255, 255, 255, 0.15);
+
+$pink: #10b981;
+$pink-light: #ff6fa5;
+$purple: #059669;
+$blue: #687cff;
+
+$ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+$font:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+
+/* ------------------------------------------------------------
+   RESET
+------------------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+
+/* ------------------------------------------------------------
+   PAGE
+------------------------------------------------------------ */
+
+main {
+    position: relative;
+}
+
+
+/* ============================================================
+   AUTH PAGE
+   Works with the existing <main>
+============================================================ */
+
+main:has(.form-container) {
+    position: relative;
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 2rem 1rem;
+
+    overflow: hidden;
+
+    color: $text;
+    font-family: $font;
+
+    background:
+        radial-gradient(
+            circle at 8% 10%,
+            rgba($pink, 0.13),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 92% 88%,
+            rgba($purple, 0.13),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 75% 10%,
+            rgba($blue, 0.055),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            $bg-deep,
+            $bg
+        );
+
+    isolation: isolate;
+}
+
+
+/* ------------------------------------------------------------
+   BACKGROUND GRID
+------------------------------------------------------------ */
+
+main:has(.form-container)::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -2;
+
+    pointer-events: none;
+
+    opacity: 0.25;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 55px 55px;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 15%,
+            transparent 82%
+        );
+
+    animation: authGridMove 20s linear infinite;
+}
+
+
+/* ------------------------------------------------------------
+   AMBIENT ORBS
+------------------------------------------------------------ */
+
+main:has(.form-container)::after {
+    content: "";
+
+    position: absolute;
+
+    width: 520px;
+    height: 520px;
+
+    left: -260px;
+    top: 15%;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    border-radius: 50%;
+
+    background: rgba($pink, 0.08);
+
+    filter: blur(100px);
+
+    animation: authOrb 12s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   FORM CONTAINER
+============================================================ */
+
+.form-container {
+    position: relative;
+
+    width: min(100%, 430px);
+
+    padding: 2.4rem;
+
+    border: 1px solid $border;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.045),
+            rgba(255, 255, 255, 0.012)
+        ),
+        $card;
+
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+
+    box-shadow:
+        0 35px 90px rgba(0, 0, 0, 0.48),
+        0 0 70px rgba($pink, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
+    animation:
+        authCardReveal
+        0.8s
+        $ease-premium
+        both;
+
+    transition:
+        border-color 0.35s $ease-soft,
+        box-shadow 0.35s $ease-soft,
+        transform 0.35s $ease-premium;
+}
+
+
+/* top glowing line */
+
+.form-container::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 12%;
+    right: 12%;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            $pink,
+            $purple,
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px rgba($pink, 0.45);
+
+    animation: authTopGlow 4s ease-in-out infinite;
+}
+
+
+/* subtle inner glow */
+
+.form-container::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    top: -100px;
+    right: -100px;
+
+    border-radius: 50%;
+
+    background: rgba($purple, 0.07);
+
+    filter: blur(45px);
+
+    pointer-events: none;
+}
+
+
+/* ------------------------------------------------------------
+   CARD HOVER
+------------------------------------------------------------ */
+
+.form-container:hover {
+    border-color: rgba($pink, 0.16);
+
+    box-shadow:
+        0 40px 100px rgba(0, 0, 0, 0.52),
+        0 0 80px rgba($pink, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+
+/* ============================================================
+   HEADING
+============================================================ */
+
+.form-container h1 {
+    position: relative;
+
+    margin: 0 0 2rem;
+
+    color: $text;
+
+    font-size: clamp(2rem, 5vw, 2.35rem);
+
+    font-weight: 800;
+
+    line-height: 1.05;
+
+    letter-spacing: -0.055em;
+
+    text-align: center;
+
+    animation:
+        authHeading
+        0.7s
+        0.12s
+        $ease-premium
+        both;
+}
+
+
+/* little gradient accent under heading */
+
+.form-container h1::after {
+    content: "";
+
+    display: block;
+
+    width: 42px;
+    height: 3px;
+
+    margin: 0.85rem auto 0;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            $pink,
+            $purple
+        );
+
+    box-shadow:
+        0 0 15px rgba($pink, 0.35);
+
+    animation:
+        headingLine
+        0.7s
+        0.3s
+        $ease-premium
+        both;
+}
+
+
+/* ============================================================
+   FORM
+============================================================ */
+
+.form-container form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.2rem;
+
+    animation:
+        authFormReveal
+        0.7s
+        0.2s
+        $ease-premium
+        both;
+}
+
+
+/* ============================================================
+   INPUT GROUP
+============================================================ */
+
+.input-group {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.55rem;
+
+    animation:
+        inputGroupReveal
+        0.6s
+        $ease-premium
+        both;
+}
+
+
+/* stagger inputs */
+
+.input-group:nth-child(1) {
+    animation-delay: 0.24s;
+}
+
+.input-group:nth-child(2) {
+    animation-delay: 0.32s;
+}
+
+
+/* ============================================================
+   LABEL
+============================================================ */
+
+.input-group label {
+    color: $text-soft;
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.02em;
+}
+
+
+/* ============================================================
+   INPUT
+============================================================ */
+
+.input-group input {
+    width: 100%;
+
+    min-height: 52px;
+
+    padding: 0 0.95rem;
+
+    outline: none;
+
+    color: $text;
+
+    border: 1px solid rgba(255, 255, 255, 0.085);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.025),
+            rgba(255, 255, 255, 0.008)
+        ),
+        $input;
+
+    font-family: inherit;
+
+    font-size: 0.82rem;
+
+    line-height: 1.4;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 0.3s $ease-soft,
+        box-shadow 0.3s $ease-soft,
+        background 0.3s $ease-soft,
+        transform 0.3s $ease-premium;
+}
+
+
+/* placeholder */
+
+.input-group input::placeholder {
+    color: #5f6676;
+
+    transition:
+        color 0.25s ease;
+}
+
+
+/* hover */
+
+.input-group input:hover {
+    border-color: $border-hover;
+}
+
+
+/* focus */
+
+.input-group input:focus {
+    border-color: rgba($pink, 0.5);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba($pink, 0.035),
+            rgba(255, 255, 255, 0.008)
+        ),
+        $input;
+
+    box-shadow:
+        0 0 0 3px rgba($pink, 0.055),
+        0 12px 30px rgba(0, 0, 0, 0.2),
+        0 0 25px rgba($pink, 0.045);
+
+    transform: translateY(-1px);
+}
+
+
+.input-group input:focus::placeholder {
+    color: #7b8293;
+}
+
+
+/* autofill */
+
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover,
+.input-group input:-webkit-autofill:focus {
+    -webkit-text-fill-color: $text;
+
+    -webkit-box-shadow:
+        0 0 0 1000px #10131d inset,
+        0 0 0 3px rgba($pink, 0.04);
+
+    transition:
+        background-color 9999s ease-in-out 0s;
+}
+
+
+/* ============================================================
+   BUTTON
+============================================================ */
+
+.form-container .button.primary-button {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: 0.35rem;
+
+    overflow: hidden;
+
+    color: white;
+
+    border: 1px solid rgba($pink, 0.4);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            105deg,
+            $pink,
+            #ff477f,
+            $purple,
+            $pink
+        );
+
+    background-size: 300% 100%;
+
+    box-shadow:
+        0 10px 30px rgba($pink, 0.18);
+
+    font-family: inherit;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.01em;
+
+    cursor: pointer;
+
+    animation:
+        authButtonGradient
+        5s
+        ease
+        infinite;
+
+    transition:
+        transform 0.25s $ease-premium,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+
+/* shine */
+
+.form-container .button.primary-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: -60%;
+    left: -80%;
+
+    width: 40%;
+    height: 220%;
+
+    transform: rotate(20deg);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.28),
+            transparent
+        );
+
+    animation:
+        authButtonShine
+        3.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* button text stays above shine */
+
+.form-container .button.primary-button {
+    isolation: isolate;
+}
+
+.form-container .button.primary-button:hover {
+    transform:
+        translateY(-3px)
+        scale(1.01);
+
+    box-shadow:
+        0 16px 38px rgba($pink, 0.3),
+        0 0 35px rgba($purple, 0.12);
+
+    filter: brightness(1.06);
+}
+
+
+.form-container .button.primary-button:active {
+    transform:
+        translateY(0)
+        scale(0.98);
+
+    box-shadow:
+        0 7px 18px rgba($pink, 0.2);
+}
+
+
+/* ============================================================
+   BOTTOM TEXT
+============================================================ */
+
+.form-container > p {
+    margin: 1.45rem 0 0;
+
+    color: $text-muted;
+
+    font-size: 0.7rem;
+
+    line-height: 1.6;
+
+    text-align: center;
+
+    animation:
+        authFooterReveal
+        0.6s
+        0.45s
+        $ease-premium
+        both;
+}
+
+
+.form-container > p a {
+    position: relative;
+
+    color: $pink-light;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        color 0.25s ease,
+        text-shadow 0.25s ease;
+}
+
+
+.form-container > p a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: -2px;
+
+    height: 1px;
+
+    transform:
+        scaleX(0);
+
+    transform-origin: right;
+
+    background: $pink;
+
+    transition:
+        transform 0.3s $ease-premium;
+}
+
+
+.form-container > p a:hover {
+    color: white;
+
+    text-shadow:
+        0 0 15px rgba($pink, 0.45);
+}
+
+
+.form-container > p a:hover::after {
+    transform: scaleX(1);
+
+    transform-origin: left;
+}
+
+
+/* ============================================================
+   LOADING STATE
+============================================================ */
+
+/*
+   This also styles your existing:
+
+   <main>
+       <h1>Loading...</h1>
+   </main>
+
+   without changing the React logic.
+*/
+
+main:not(:has(.form-container)) {
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    color: $text;
+
+    font-family: $font;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba($pink, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba($purple, 0.12),
+            transparent 30%
+        ),
+        $bg;
+}
+
+
+main:not(:has(.form-container)) h1 {
+    margin: 0;
+
+    color: $text;
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    animation:
+        loadingPulse
+        1.5s
+        ease-in-out
+        infinite;
+}
+
+
+main:not(:has(.form-container)) h1::after {
+    content: "";
+
+    display: block;
+
+    width: 35px;
+    height: 3px;
+
+    margin: 0.9rem auto 0;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            $pink,
+            $purple
+        );
+}
+
+
+/* ============================================================
+   KEYFRAMES
+============================================================ */
+
+@keyframes authCardReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(28px)
+            scale(0.975);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+@keyframes authHeading {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes authFormReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes inputGroupReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes authFooterReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes headingLine {
+
+    from {
+        width: 0;
+
+        opacity: 0;
+    }
+
+    to {
+        width: 42px;
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes authTopGlow {
+
+    0%,
+    100% {
+        opacity: 0.45;
+
+        transform: scaleX(0.7);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform: scaleX(1);
+    }
+}
+
+
+@keyframes authOrb {
+
+    0%,
+    100% {
+        transform:
+            translate(0, 0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(60px, -30px)
+            scale(1.12);
+    }
+}
+
+
+@keyframes authGridMove {
+
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(55px);
+    }
+}
+
+
+@keyframes authButtonGradient {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+@keyframes authButtonShine {
+
+    0% {
+        left: -80%;
+    }
+
+    45%,
+    100% {
+        left: 150%;
+    }
+}
+
+
+@keyframes loadingPulse {
+
+    0%,
+    100% {
+        opacity: 0.45;
+
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform: translateY(-3px);
+    }
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 600px) {
+
+    main:has(.form-container) {
+        padding: 1rem 0.75rem;
+    }
+
+    .form-container {
+        width: 100%;
+
+        padding: 2rem 1.35rem;
+
+        border-radius: 20px;
+    }
+
+    .form-container h1 {
+        font-size: 2rem;
+
+        margin-bottom: 1.7rem;
+    }
+
+    .input-group input {
+        min-height: 50px;
+    }
+
+    .form-container .button.primary-button {
+        min-height: 50px;
+    }
+}
+
+
+/* ============================================================
+   SMALL MOBILE
+============================================================ */
+
+@media (max-width: 380px) {
+
+    main:has(.form-container) {
+        padding: 0.75rem;
+    }
+
+    .form-container {
+        padding: 1.7rem 1.1rem;
+
+        border-radius: 18px;
+    }
+
+    .form-container h1 {
+        font-size: 1.8rem;
+    }
+
+    .input-group input {
+        font-size: 0.78rem;
+    }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    main:has(.form-container),
+    main:has(.form-container)::before,
+    main:has(.form-container)::after,
+    .form-container,
+    .form-container::before,
+    .form-container::after,
+    .form-container h1,
+    .form-container h1::after,
+    .form-container form,
+    .input-group,
+    .form-container > p,
+    .form-container .button.primary-button,
+    .form-container .button.primary-button::before,
+    main:not(:has(.form-container)) h1 {
+
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+    }
+}

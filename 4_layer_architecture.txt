@@ -1,0 +1,22 @@
+4 layer architecture 
+---------------------------------------------
+UI
+->componenets
+->pages
+
+Hook(for managing state and api layers)
+->hooks
+
+State (data store krne k liye)
+->auth.context.jsx
+->ai.context.jsx
+
+Api(for communication with backend)
+->services
+  ->auth.api.js
+-------------------------------------------------
+AI 
+
+->self description+resume(pdf)+job description
+            ||
+            REPORT(TECHNICAL QUES+SKILL GAPS+PREPARATION PLAN+BEHAVIOURAL QUES)
