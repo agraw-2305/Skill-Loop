@@ -32,7 +32,6 @@ You paste in the job description you're targeting, upload your resume or describ
 |---|---|
 | 🎯 **Role Match Score** | See how aligned you are with the target role at a glance |
 | 💻 **Technical Questions** | Role-specific questions with interviewer intent & model answers |
-| 💬 **Behavioral Questions** | Situational and soft-skill rounds, fully prepared |
 | 🔍 **Skill Gap Analysis** | Know exactly what to strengthen before the interview |
 | 🗺️ **Preparation Roadmap** | Structured day-by-day study plan for focused prep |
 | 📄 **Resume-Aware Analysis** | Upload your resume for deeply personalized insights |
@@ -170,7 +169,6 @@ npm run dev        # → http://localhost:3000
 - [x] Job description input with character counter
 - [x] Resume upload (PDF / DOCX, max 5 MB)
 - [x] Quick self-description as a resume alternative
-- [x] AI-generated interview strategy via Gemini
 - [x] Technical questions with intent & model answers
 - [x] Behavioral questions
 - [x] Role match score
