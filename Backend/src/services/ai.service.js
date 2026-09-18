@@ -1,8 +1,8 @@
-const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const puppeteer = require("puppeteer");
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_API_KEY
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
 });
 
 // =====================================================
@@ -10,10 +10,10 @@ const ai = new GoogleGenAI({
 // =====================================================
 
 // Primary model
-const PRIMARY_MODEL = "gemini-3.6-flash";
+const PRIMARY_MODEL = "llama-3.3-70b-versatile";
 
 // Fallback model
-const FALLBACK_MODEL = "gemini-3.5-flash-lite";
+const FALLBACK_MODEL = "llama-3.1-8b-instant";
 
 // =====================================================
 // RETRY HELPER
@@ -51,10 +51,10 @@ function isQuotaError(error) {
 }
 
 // =====================================================
-// GEMINI REQUEST WITH RETRY + FALLBACK
+// GROQ REQUEST WITH RETRY + FALLBACK
 // =====================================================
 
-async function generateWithFallback(prompt, schema) {
+async function generateWithFallback(prompt, schemaDescription) {
 
     const models = [
         PRIMARY_MODEL,
@@ -73,24 +73,34 @@ async function generateWithFallback(prompt, schema) {
             try {
 
                 console.log(
-                    `Gemini request → model=${model}, attempt=${attempt + 1}`
+                    `Groq request → model=${model}, attempt=${attempt + 1}`
                 );
 
-                const response = await ai.models.generateContent({
+                const response = await groq.chat.completions.create({
 
                     model,
 
-                    contents: prompt,
+                    messages: [
+                        {
+                            role: "system",
+                            content: "You are an expert assistant. Always respond with valid JSON that exactly matches the schema provided in the user message. Never include markdown, code fences, or extra text."
+                        },
+                        {
+                            role: "user",
+                            content: prompt + "\n\n" + schemaDescription
+                        }
+                    ],
 
-                    config: {
-                        responseMimeType: "application/json",
-                        responseJsonSchema: schema
-                    }
+                    response_format: { type: "json_object" },
+
+                    temperature: 0.7,
+
+                    max_tokens: 8000
 
                 });
 
                 console.log(
-                    `Gemini success → model=${model}`
+                    `Groq success → model=${model}`
                 );
 
                 return response;
@@ -102,7 +112,7 @@ async function generateWithFallback(prompt, schema) {
                 const status = getStatusCode(error);
 
                 console.error(
-                    `Gemini error → model=${model}, status=${status}`
+                    `Groq error → model=${model}, status=${status}`
                 );
 
                 // ==========================================
@@ -112,7 +122,7 @@ async function generateWithFallback(prompt, schema) {
                 if (isQuotaError(error)) {
 
                     console.error(
-                        "Gemini quota/rate limit reached."
+                        "Groq quota/rate limit reached."
                     );
 
                     // DO NOT repeatedly retry 429.
@@ -132,7 +142,7 @@ async function generateWithFallback(prompt, schema) {
                             Math.random() * 1000;
 
                         console.log(
-                            `Retrying Gemini in ${Math.round(delay)}ms...`
+                            `Retrying Groq in ${Math.round(delay)}ms...`
                         );
 
                         await sleep(delay);
@@ -160,183 +170,6 @@ async function generateWithFallback(prompt, schema) {
 }
 
 // =====================================================
-// INTERVIEW REPORT SCHEMA
-// =====================================================
-
-const interviewReportJsonSchema = {
-
-    type: "object",
-
-    properties: {
-
-        title: {
-            type: "string",
-            description: "The job title extracted from the job description."
-        },
-
-        matchScore: {
-            type: "number",
-            description: "Candidate match score between 0 and 100."
-        },
-
-        technicalQuestions: {
-
-            type: "array",
-
-            items: {
-
-                type: "object",
-
-                properties: {
-
-                    question: {
-                        type: "string"
-                    },
-
-                    intention: {
-                        type: "string"
-                    },
-
-                    answer: {
-                        type: "string"
-                    }
-
-                },
-
-                required: [
-                    "question",
-                    "intention",
-                    "answer"
-                ]
-
-            }
-
-        },
-
-        behavioralQuestions: {
-
-            type: "array",
-
-            items: {
-
-                type: "object",
-
-                properties: {
-
-                    question: {
-                        type: "string"
-                    },
-
-                    intention: {
-                        type: "string"
-                    },
-
-                    answer: {
-                        type: "string"
-                    }
-
-                },
-
-                required: [
-                    "question",
-                    "intention",
-                    "answer"
-                ]
-
-            }
-
-        },
-
-        skillGaps: {
-
-            type: "array",
-
-            items: {
-
-                type: "object",
-
-                properties: {
-
-                    skill: {
-                        type: "string"
-                    },
-
-                    severity: {
-                        type: "string",
-
-                        enum: [
-                            "low",
-                            "medium",
-                            "high"
-                        ]
-
-                    }
-
-                },
-
-                required: [
-                    "skill",
-                    "severity"
-                ]
-
-            }
-
-        },
-
-        preparationPlan: {
-
-            type: "array",
-
-            items: {
-
-                type: "object",
-
-                properties: {
-
-                    day: {
-                        type: "integer"
-                    },
-
-                    focus: {
-                        type: "string"
-                    },
-
-                    tasks: {
-
-                        type: "array",
-
-                        items: {
-                            type: "string"
-                        }
-
-                    }
-
-                },
-
-                required: [
-                    "day",
-                    "focus",
-                    "tasks"
-                ]
-
-            }
-
-        }
-
-    },
-
-    required: [
-        "title",
-        "matchScore",
-        "technicalQuestions",
-        "behavioralQuestions",
-        "skillGaps",
-        "preparationPlan"
-    ]
-
-};
-
-// =====================================================
 // GENERATE INTERVIEW REPORT
 // =====================================================
 
@@ -346,8 +179,32 @@ async function generateInterviewReport({
     jobDescription
 }) {
 
-    const prompt = `
+    const schemaDescription = `
+Return ONLY a JSON object with exactly this structure:
 
+{
+  "title": "<string: job title from job description>",
+  "matchScore": <number: 0-100>,
+  "technicalQuestions": [
+    { "question": "<string>", "intention": "<string>", "answer": "<string>" }
+    // EXACTLY 8 items
+  ],
+  "behavioralQuestions": [
+    { "question": "<string>", "intention": "<string>", "answer": "<string>" }
+    // EXACTLY 6 items
+  ],
+  "skillGaps": [
+    { "skill": "<string>", "severity": "low|medium|high" }
+    // EXACTLY 4 items
+  ],
+  "preparationPlan": [
+    { "day": <integer>, "focus": "<string>", "tasks": ["<string>", ...] }
+    // EXACTLY 7 items
+  ]
+}
+`;
+
+    const prompt = `
 You are an expert technical recruiter and interview preparation coach.
 
 Generate a complete interview preparation report for this candidate.
@@ -425,16 +282,11 @@ NEVER return strings instead of objects.
 Do not leave arrays empty.
 
 Use the candidate's actual resume and job description.
-
-Return ONLY JSON matching the schema.
 `;
 
-    const response = await generateWithFallback(
-        prompt,
-        interviewReportJsonSchema
-    );
+    const response = await generateWithFallback(prompt, schemaDescription);
 
-    const result = JSON.parse(response.text);
+    const result = JSON.parse(response.choices[0].message.content);
 
     console.log(
         "AI GENERATED REPORT:",
@@ -510,28 +362,15 @@ async function generateResumePdf({
     jobDescription
 }) {
 
-    const resumePdfJsonSchema = {
+    const schemaDescription = `
+Return ONLY a JSON object with exactly this structure:
 
-        type: "object",
-
-        properties: {
-
-            html: {
-                type: "string",
-                description:
-                    "Complete HTML content of the resume."
-            }
-
-        },
-
-        required: [
-            "html"
-        ]
-
-    };
+{
+  "html": "<string: complete HTML content of the resume>"
+}
+`;
 
     const prompt = `
-
 Generate a professional ATS-friendly resume.
 
 RESUME:
@@ -556,25 +395,15 @@ Requirements:
 - Use simple professional styling.
 - The resume should sound human-written.
 - Use only information present in the candidate data.
-- Return ONLY JSON matching the provided schema.
-
-The JSON must contain exactly one field:
-
-html
-
-The html field must contain the complete resume HTML.
 `;
 
     console.log(
-        "Generating resume HTML using Gemini..."
+        "Generating resume HTML using Groq..."
     );
 
-    const response = await generateWithFallback(
-        prompt,
-        resumePdfJsonSchema
-    );
+    const response = await generateWithFallback(prompt, schemaDescription);
 
-    const jsonContent = JSON.parse(response.text);
+    const jsonContent = JSON.parse(response.choices[0].message.content);
 
     console.log(
         "Resume HTML generated successfully."
